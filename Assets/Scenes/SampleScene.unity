@@ -947,6 +947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938e7588a4a04c247a16d593056a8c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  balanceDisplayMono: {fileID: 1988519070}
 --- !u!4 &1587233454
 Transform:
   m_ObjectHideFlags: 0
@@ -1041,6 +1042,7 @@ GameObject:
   - component: {fileID: 1988519067}
   - component: {fileID: 1988519069}
   - component: {fileID: 1988519068}
+  - component: {fileID: 1988519070}
   m_Layer: 5
   m_Name: Balance
   m_TagString: Untagged
@@ -1106,6 +1108,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1988519066}
   m_CullTransparentMesh: 1
+--- !u!114 &1988519070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1988519066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 480051658d9079d48829279240720121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  balance: {fileID: 1435790552}
 --- !u!1 &2045759758
 GameObject:
   m_ObjectHideFlags: 0

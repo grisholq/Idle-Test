@@ -16,7 +16,7 @@ public class BuisnessCardUpgrade : MonoBehaviour
         firstUpgradeButton.interactable = interactable;
     }
     
-    public void SetFirstUpgradeName(string name)
+    public void SetName(string name)
     {
         firstUpgradeName.text = name;
     }    

@@ -13,4 +13,39 @@ MonoBehaviour:
   m_Name: BuisnessCoreConfig
   m_EditorClassIdentifier: 
   BuisnessesCount: 5
-  BuisnessesCoreData: []
+  BuisnessesCoreData:
+  - IncomeDelay: 3
+    BaseCost: 3
+    BaseIncome: 3
+    FisrtUpgradePrice: 50
+    FisrtUpgradeIncomeModifier: 0.5
+    SecondUpgradePrice: 400
+    SecondUpgradeIncomeModifier: 1
+  - IncomeDelay: 6
+    BaseCost: 40
+    BaseIncome: 40
+    FisrtUpgradePrice: 1200
+    FisrtUpgradeIncomeModifier: 1
+    SecondUpgradePrice: 4000
+    SecondUpgradeIncomeModifier: 2
+  - IncomeDelay: 10
+    BaseCost: 200
+    BaseIncome: 200
+    FisrtUpgradePrice: 6000
+    FisrtUpgradeIncomeModifier: 100
+    SecondUpgradePrice: 20000
+    SecondUpgradeIncomeModifier: 150
+  - IncomeDelay: 17
+    BaseCost: 1000
+    BaseIncome: 1000
+    FisrtUpgradePrice: 15000
+    FisrtUpgradeIncomeModifier: 1
+    SecondUpgradePrice: 50000
+    SecondUpgradeIncomeModifier: 2
+  - IncomeDelay: 30
+    BaseCost: 5000
+    BaseIncome: 5000
+    FisrtUpgradePrice: 100000
+    FisrtUpgradeIncomeModifier: 2
+    SecondUpgradePrice: 500000
+    SecondUpgradeIncomeModifier: 4

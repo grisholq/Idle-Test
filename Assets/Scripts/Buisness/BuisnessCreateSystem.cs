@@ -11,6 +11,7 @@ public class BuisnessCreateSystem : IEcsInitSystem
     private EcsPool<Buisness> buisnessPool;
     private EcsPool<BuisnessCoreData> buisnessCoreConfigPool;
     private EcsPool<BuisnessCosmeticData> buisnessCosmeticConfigPool;
+    private EcsPool<BuisnessCardComponent> buisnessCardComponentPool;
     
     private const string SaveKey = "BuisnessSaveData";
     
@@ -27,6 +28,8 @@ public class BuisnessCreateSystem : IEcsInitSystem
         buisnessPool = world.GetPool<Buisness>();
         buisnessCoreConfigPool = world.GetPool<BuisnessCoreData>();
         buisnessCosmeticConfigPool = world.GetPool<BuisnessCosmeticData>();
+        buisnessCardComponentPool = world.GetPool<BuisnessCardComponent>();
+        
         var cards = buisnessCardListDisplay.CreateCards(buisnessCoreConfig.BuisnessesCount);
         var saveData = LoadBuisnessSaveData();
         
@@ -34,42 +37,45 @@ public class BuisnessCreateSystem : IEcsInitSystem
         {
             var coreData = buisnessCoreConfig.BuisnessesCoreData[i];
             var cosmeticData = buisnessCosmeticConfig.BuisnessCosmeticDatas[i];
-            CreateBuisness(coreData, cosmeticData, saveData.Levels[i], cards[i]);
+            CreateBuisness(coreData, cosmeticData, saveData.Buisnesses[i], cards[i]);
         }
     }
 
-    private void CreateBuisness(BuisnessCoreData coreData, BuisnessCosmeticData cosmeticData, int level, BuisnessCard card)
+    private void CreateBuisness(BuisnessCoreData coreData, BuisnessCosmeticData cosmeticData, Buisness buisness, BuisnessCard card)
     {
         int buisnessEntity = world.NewEntity();
-        ref var buisness = ref buisnessPool.Add(buisnessEntity);
+        ref var buisnessCreated = ref buisnessPool.Add(buisnessEntity);
         ref var coreDataInstance = ref buisnessCoreConfigPool.Add(buisnessEntity);
         ref var cosmeticDataInstance = ref buisnessCosmeticConfigPool.Add(buisnessEntity);
+        ref var cardComponentInstance = ref buisnessCardComponentPool.Add(buisnessEntity);
 
+        buisnessCreated = buisness;
         coreDataInstance = coreData;
         cosmeticDataInstance = cosmeticData;
-        
-        buisness.Level = level;
+        cardComponentInstance.Card = card;
     }
 
-    private BuisnessSaveData LoadBuisnessSaveData()
+    private BuisnessesSaveData LoadBuisnessSaveData()
     {
         if (PlayerPrefs.HasKey(SaveKey) == false)
         {
             return CreateBuisnessSaveData(buisnessCoreConfig.BuisnessesCount);
         }
         
-        return JsonUtility.FromJson<BuisnessSaveData>(PlayerPrefs.GetString(SaveKey));
+        return JsonUtility.FromJson<BuisnessesSaveData>(PlayerPrefs.GetString(SaveKey));
     }
 
-    private BuisnessSaveData CreateBuisnessSaveData(int buisnessCount)
+    private BuisnessesSaveData CreateBuisnessSaveData(int buisnessCount)
     {
-        BuisnessSaveData saveData = new BuisnessSaveData { Levels = new List<int> { 1 } };
+        BuisnessesSaveData saveData = new BuisnessesSaveData();
         
-        for (int i = 0; i < buisnessCount - 1; i++)
+        saveData.Buisnesses.Add(Buisness.Starting);
+
+        for (int i = 0; i < buisnessCount; i++)
         {
-            saveData.Levels.Add(0);
+            saveData.Buisnesses.Add(Buisness.Default);
         }
-        
+
         return saveData;
     }
 }

@@ -27,6 +27,9 @@ class EcsStartup : MonoBehaviour
             .Add(new BalanceEarnSystem())
             .Add(new BalanceDisplaySystem(balanceDisplayMono))
             .Add(new BuisnessCreateSystem(buisnessCoreConfig, buisnessCosmeticConfig, buisnessCardListDisplay))
+            .Add(new BuisnessCosmeticsInitSystem())
+            .Add(new BuisnessLevelUpSystem())
+            .Add(new BuisnessIncomeSystem())
             .Init ();
     }
 

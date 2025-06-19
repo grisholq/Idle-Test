@@ -22,11 +22,19 @@ public class BuisnessCard : MonoBehaviour
     public BuisnessCardUpgrade SecondUpgrade => secondUpgrade;
 
     private Action onLevelUp, onFirstUpgrade, onSecondUpgrade;
-    
-    public void SetActions(Action onLevelUp, Action onFirstUpgrade, Action onSecondUpgrade)
+
+    public void SetLevelUpAction(Action onLevelUp)
     {
         this.onLevelUp = onLevelUp;
+    }
+
+    public void SetFirstUpgradeAction(Action onFirstUpgrade)
+    {
         this.onFirstUpgrade = onFirstUpgrade;
+    }
+
+    public void SetSecondUpgradeAction(Action onSecondUpgrade)
+    {
         this.onSecondUpgrade = onSecondUpgrade;
     }
 
@@ -70,7 +78,7 @@ public class BuisnessCard : MonoBehaviour
         levelUpButton.interactable = interactable;
     }
     
-    public void SetLevelUpPrice(float price)
+    public void SetLevelUpCost(float price)
     {
         levelUpPrice.text = $"Цена: {price:0.0}$";
     }

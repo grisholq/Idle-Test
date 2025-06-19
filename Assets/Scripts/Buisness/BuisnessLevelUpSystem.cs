@@ -9,7 +9,7 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
     private EcsPool<Balance> balancePool;
     private EcsPool<Buisness> buisnessPool;
     private EcsPool<BuisnessCardComponent> buisnessCardPool;
-    private EcsPool<BuisnessCoreData> buisnessCoreDataPool;
+    private EcsPool<BuisnessData> buisnessDataPool;
     private EcsPool<BuisnessLevelUpEvent> buisnessLevelUpEventPool;
     private EcsFilter balanceFilter;
     private EcsFilter buisnessFilter;
@@ -22,12 +22,12 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
         balancePool = world.GetPool<Balance>();
         buisnessPool = world.GetPool<Buisness>();
         buisnessCardPool = world.GetPool<BuisnessCardComponent>();
-        buisnessCoreDataPool = world.GetPool<BuisnessCoreData>();
+        buisnessDataPool = world.GetPool<BuisnessData>();
         buisnessLevelUpEventPool = world.GetPool<BuisnessLevelUpEvent>();
         
         balanceFilter = world.Filter<Balance>().End();
-        buisnessFilter = world.Filter<Buisness>().Inc<BuisnessCoreData>().Inc<BuisnessCardComponent>().End();
-        buisnessLevelUpFilter = world.Filter<Buisness>().Inc<BuisnessCoreData>().Inc<BuisnessCardComponent>().Inc<BuisnessLevelUpEvent>().End();
+        buisnessFilter = world.Filter<Buisness>().Inc<BuisnessData>().Inc<BuisnessCardComponent>().End();
+        buisnessLevelUpFilter = world.Filter<Buisness>().Inc<BuisnessData>().Inc<BuisnessCardComponent>().Inc<BuisnessLevelUpEvent>().End();
 
 
         foreach (var b in balanceFilter)
@@ -38,9 +38,9 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
             {
                 ref var buisness = ref buisnessPool.Get(e);
                 var buisnessCard = buisnessCardPool.Get(e).Card;
-                ref var buisnessCore = ref buisnessCoreDataPool.Get(e);
-                var levelUpCost = CalculateLevelUpCost(buisness, buisnessCore);
-                var income = Buisness.CalculateIncome(buisness, buisnessCore);
+                ref var buisnessData = ref buisnessDataPool.Get(e);
+                var levelUpCost = CalculateLevelUpCost(buisness, buisnessData);
+                var income = Buisness.CalculateIncome(buisness, buisnessData.Core);
                 
                 buisnessCard.SetLevel(buisness.Level);
                 buisnessCard.SetIncome(income);
@@ -51,9 +51,9 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
         }
     }
     
-    private float CalculateLevelUpCost(Buisness buisness, BuisnessCoreData coreData)
+    private float CalculateLevelUpCost(Buisness buisness, BuisnessData buisnessData)
     {
-        return (buisness.Level + 1) * coreData.BaseCost;
+        return (buisness.Level + 1) * buisnessData.Core.BaseIncome;
     }
 
     public void Run(IEcsSystems systems)
@@ -73,19 +73,19 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
         {
             ref var buisness = ref buisnessPool.Get(e);
             var buisnessCard = buisnessCardPool.Get(e).Card;
-            ref var buisnessCore = ref buisnessCoreDataPool.Get(e);
-            var levelUpCost = CalculateLevelUpCost(buisness, buisnessCore);
+            ref var buisnessData = ref buisnessDataPool.Get(e);
+            var levelUpCost = CalculateLevelUpCost(buisness, buisnessData);
             
             ref var spendEvent = ref world.GetPool<BalanceSpendEvent>().Add(balanceEntity);
             spendEvent.Amount += levelUpCost;
             buisnessLevelUpEventPool.Del(e);
 
             buisness.Level++;
-            var income = Buisness.CalculateIncome(buisness, buisnessCore);    
+            var income = Buisness.CalculateIncome(buisness, buisnessData.Core);    
             
             buisnessCard.SetLevel(buisness.Level);
             buisnessCard.SetIncome(income);
-            buisnessCard.SetLevelUpCost(CalculateLevelUpCost(buisness, buisnessCore));
+            buisnessCard.SetLevelUpCost(CalculateLevelUpCost(buisness, buisnessData));
             buisnessCard.SetLevelUpButtonInteractable(balance.Current >= levelUpCost);
         }
     }
@@ -96,8 +96,8 @@ public class BuisnessLevelUpSystem : IEcsInitSystem, IEcsRunSystem
         {
             ref var buisness = ref buisnessPool.Get(e);
             var buisnessCard = buisnessCardPool.Get(e).Card;
-            ref var buisnessCore = ref buisnessCoreDataPool.Get(e);
-            var levelUpCost = CalculateLevelUpCost(buisness, buisnessCore);
+            ref var buisnessData = ref buisnessDataPool.Get(e);
+            var levelUpCost = CalculateLevelUpCost(buisness, buisnessData);
             
             buisnessCard.SetLevelUpButtonInteractable(balance.Current >= levelUpCost);
         }

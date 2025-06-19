@@ -2,15 +2,14 @@ using System.Collections.Generic;
 using Leopotam.EcsLite;
 using UnityEngine;
 
-public class BuisnessCreateSystem : IEcsInitSystem
+public class BuisnessCreateSystem : IEcsInitSystem, IEcsDestroySystem
 {
     private BuisnessCoreConfig buisnessCoreConfig;             
     private BuisnessCosmeticConfig buisnessCosmeticConfig;   
     private BuisnessCardListDisplay buisnessCardListDisplay;
     private EcsWorld world;
     private EcsPool<Buisness> buisnessPool;
-    private EcsPool<BuisnessCoreData> buisnessCoreConfigPool;
-    private EcsPool<BuisnessCosmeticData> buisnessCosmeticConfigPool;
+    private EcsPool<BuisnessData> buisnessData;
     private EcsPool<BuisnessCardComponent> buisnessCardComponentPool;
     
     private const string SaveKey = "BuisnessSaveData";
@@ -26,8 +25,7 @@ public class BuisnessCreateSystem : IEcsInitSystem
     {
         world = systems.GetWorld();
         buisnessPool = world.GetPool<Buisness>();
-        buisnessCoreConfigPool = world.GetPool<BuisnessCoreData>();
-        buisnessCosmeticConfigPool = world.GetPool<BuisnessCosmeticData>();
+        buisnessData = world.GetPool<BuisnessData>();
         buisnessCardComponentPool = world.GetPool<BuisnessCardComponent>();
         
         var cards = buisnessCardListDisplay.CreateCards(buisnessCoreConfig.BuisnessesCount);
@@ -45,13 +43,14 @@ public class BuisnessCreateSystem : IEcsInitSystem
     {
         int buisnessEntity = world.NewEntity();
         ref var buisnessCreated = ref buisnessPool.Add(buisnessEntity);
-        ref var coreDataInstance = ref buisnessCoreConfigPool.Add(buisnessEntity);
-        ref var cosmeticDataInstance = ref buisnessCosmeticConfigPool.Add(buisnessEntity);
+        ref var data = ref buisnessData.Add(buisnessEntity);
         ref var cardComponentInstance = ref buisnessCardComponentPool.Add(buisnessEntity);
 
         buisnessCreated = buisness;
-        coreDataInstance = coreData;
-        cosmeticDataInstance = cosmeticData;
+        data.Name = cosmeticData.Name;
+        data.Core = coreData;
+        data.Core.FirstUpgrade.Name = cosmeticData.FirstUpgradeName;
+        data.Core.SecondUpgrade.Name = cosmeticData.SecondUpgradeName;
         cardComponentInstance.Card = card;
     }
 
@@ -71,11 +70,26 @@ public class BuisnessCreateSystem : IEcsInitSystem
         
         saveData.Buisnesses.Add(Buisness.Starting);
 
-        for (int i = 0; i < buisnessCount; i++)
+        for (int i = 0; i < buisnessCount - 1; i++)
         {
             saveData.Buisnesses.Add(Buisness.Default);
         }
 
         return saveData;
+    }
+
+    public void Destroy(IEcsSystems systems)
+    {
+        var buisnessesFilter = world.Filter<Buisness>().End();
+        BuisnessesSaveData saveData = new BuisnessesSaveData();
+        
+        foreach (var b in buisnessesFilter)
+        {
+            ref var buisness = ref buisnessPool.Get(b);
+            
+            saveData.Buisnesses.Add(buisness);
+        }
+        
+        PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(saveData));
     }
 }

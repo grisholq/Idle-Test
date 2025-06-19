@@ -23,18 +23,25 @@ class EcsStartup : MonoBehaviour
         world = new EcsWorld ();
         systems = new EcsSystems (world);
         systems
+            .Add(new SaveSystem())
             .Add(new BalanceSpendSystem())
             .Add(new BalanceEarnSystem())
-            .Add(new BalanceDisplaySystem(balanceDisplayMono))
+            .Add(new BalanceUpdateSystem(balanceDisplayMono))
             .Add(new BuisnessCreateSystem(buisnessCoreConfig, buisnessCosmeticConfig, buisnessCardListDisplay))
             .Add(new BuisnessCosmeticsInitSystem())
             .Add(new BuisnessLevelUpSystem())
             .Add(new BuisnessIncomeSystem())
+            .Add(new BuinessUpgradeSystem())
             .Init ();
     }
 
     private void Update () 
     {
         systems?.Run ();
+    }
+
+    private void OnDestroy()
+    {
+        systems?.Destroy ();
     }
 }

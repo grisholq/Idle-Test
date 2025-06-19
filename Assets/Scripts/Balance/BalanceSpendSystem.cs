@@ -11,19 +11,21 @@ public class BalanceSpendSystem : IEcsInitSystem, IEcsRunSystem
     public void Init(IEcsSystems systems)
     { 
         world = systems.GetWorld();
+        balancePool = world.GetPool<Balance>();
+        balanceSpendPool = world.GetPool<BalanceSpendEvent>();
         spendEvents = world.Filter<Balance>().Inc<BalanceSpendEvent>().End();
     }
 
     public void Run(IEcsSystems systems)
     {
-        foreach (var entity in spendEvents)
+        foreach (var e in spendEvents)
         {
-            ref var balance = ref balancePool.Get(entity);
-            ref var balanceSpend = ref balanceSpendPool.Get(entity);
+            ref var balance = ref balancePool.Get(e);
+            ref var balanceSpend = ref balanceSpendPool.Get(e);
 
             balance.Current = Mathf.Max(balance.Current - balanceSpend.Amount, 0);
             
-            balanceSpendPool.Del(entity);
+            balanceSpendPool.Del(e);
         }
     }
 }

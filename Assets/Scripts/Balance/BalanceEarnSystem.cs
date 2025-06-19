@@ -11,6 +11,8 @@ public class BalanceEarnSystem : IEcsInitSystem, IEcsRunSystem
     public void Init(IEcsSystems systems)
     { 
         world = systems.GetWorld();
+        balancePool = world.GetPool<Balance>();
+        balanceEarnPool = world.GetPool<BalanceEarnEvent>();
         earnEvents = world.Filter<Balance>().Inc<BalanceEarnEvent>().End();
     }
 

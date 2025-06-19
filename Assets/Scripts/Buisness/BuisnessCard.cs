@@ -17,12 +17,26 @@ public class BuisnessCard : MonoBehaviour
     
     [SerializeField] private BuisnessCardUpgrade firstUpgrade;
     [SerializeField] private BuisnessCardUpgrade secondUpgrade;
+
+    public List<BuisnessCardUpgrade> BuisnessCardUpgradeList
+    {
+        get
+        {
+            if (buisnessCardUpgrades == null)
+            {
+                buisnessCardUpgrades = new List<BuisnessCardUpgrade>() { FirstUpgrade, SecondUpgrade };
+            }
+            
+            return buisnessCardUpgrades;
+        }
+    }
     
     public BuisnessCardUpgrade FirstUpgrade => firstUpgrade;
     public BuisnessCardUpgrade SecondUpgrade => secondUpgrade;
 
     private Action onLevelUp, onFirstUpgrade, onSecondUpgrade;
-
+    private List<BuisnessCardUpgrade> buisnessCardUpgrades = null;
+    
     public void SetLevelUpAction(Action onLevelUp)
     {
         this.onLevelUp = onLevelUp;

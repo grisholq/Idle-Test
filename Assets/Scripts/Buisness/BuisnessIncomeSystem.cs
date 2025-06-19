@@ -1,11 +1,12 @@
 using Leopotam.EcsLite;
+using UnityEngine;
 
 public class BuisnessIncomeSystem : IEcsInitSystem, IEcsRunSystem
 {
     private EcsWorld world;
     private EcsPool<Balance> balancePool;
     private EcsPool<Buisness> buisnessPool;
-    private EcsPool<BuisnessCoreData> buisnessCoreDataPool;
+    private EcsPool<BuisnessData> buisnessDataPool;
     private EcsPool<BuisnessCardComponent> buisnessCardComponentPool;
     private EcsPool<BalanceEarnEvent> balanceEarnEventPool;
     private EcsFilter buisnessFilter;
@@ -16,11 +17,11 @@ public class BuisnessIncomeSystem : IEcsInitSystem, IEcsRunSystem
         world = systems.GetWorld();
         balancePool = world.GetPool<Balance>();
         buisnessPool = world.GetPool<Buisness>();
-        buisnessCoreDataPool = world.GetPool<BuisnessCoreData>();
+        buisnessDataPool = world.GetPool<BuisnessData>();
         buisnessCardComponentPool = world.GetPool<BuisnessCardComponent>();
         balanceEarnEventPool = world.GetPool<BalanceEarnEvent>();
         
-        buisnessFilter = world.Filter<Buisness>().Inc<BuisnessCoreData>().Inc<BuisnessCardComponent>().End();
+        buisnessFilter = world.Filter<Buisness>().Inc<BuisnessData>().Inc<BuisnessCardComponent>().End();
         balanceFilter = world.Filter<Balance>().End();
     }
 
@@ -33,19 +34,24 @@ public class BuisnessIncomeSystem : IEcsInitSystem, IEcsRunSystem
             foreach (var e in buisnessFilter)
             {
                 ref var buisness = ref buisnessPool.Get(e);
-                ref var buisnessCoreData = ref buisnessCoreDataPool.Get(e); 
+                ref var buisnessData = ref buisnessDataPool.Get(e); 
                 var buisnessCard = buisnessCardComponentPool.Get(e).Card;
+                var incomeDelay = buisnessData.Core.IncomeDelay;
                 
-                if (buisness.IncomeTime >= buisnessCoreData.IncomeDelay)
+                if (buisness.Purchased == false) continue;
+                
+                buisness.IncomeTime += Time.deltaTime;
+                
+                if (buisness.IncomeTime >= buisnessData.Core.IncomeDelay)
                 {
-                    var income = Buisness.CalculateIncome(buisness, buisnessCoreData);
+                    var income = Buisness.CalculateIncome(buisness, buisnessData.Core);
                     ref var balanceEarnEvent = ref balanceEarnEventPool.Add(b);
                     balanceEarnEvent.Amount += income;
                     
                     buisness.IncomeTime = 0;
                 }
                 
-                buisnessCard.SetProgress(buisness.IncomeTime / buisnessCoreData.IncomeDelay);
+                buisnessCard.SetProgress(buisness.IncomeTime / incomeDelay);
             }
         }
     }

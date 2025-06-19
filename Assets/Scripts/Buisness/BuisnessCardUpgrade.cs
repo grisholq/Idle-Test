@@ -11,7 +11,9 @@ public class BuisnessCardUpgrade : MonoBehaviour
     [SerializeField] private TextMeshProUGUI firstUpgradeIncomeModifier;
     [SerializeField] private TextMeshProUGUI firstUpgradePrice;
     
-    public void SetFirstUpgradeButtonInteractable(bool interactable)
+    public BuisnessUpgradeData UpgradeData { get; set; }
+    
+    public void SetButtonInteractable(bool interactable)
     {
         firstUpgradeButton.interactable = interactable;
     }
@@ -21,13 +23,19 @@ public class BuisnessCardUpgrade : MonoBehaviour
         firstUpgradeName.text = name;
     }    
     
-    public void SetFirstUpgradeIncomeModifier(float modifier)
+    public void SetIncomeModifier(float modifier)
     {
-        firstUpgradeName.text = "Доход: {modifier:0.0}%";
+        modifier *= 100;
+        firstUpgradeIncomeModifier.text = $"Доход: {modifier}%";
     }
 
-    public void SetFirstUpgradePrice(float price)
+    public void SetPrice(float price)
     {
-        firstUpgradePrice.text = "Цена: {price:0.0}$}";
+        firstUpgradePrice.text = $"Цена: {price:0.0}$";
+    }
+
+    public void SetPurchasedCaption()
+    {
+        firstUpgradePrice.text = "Куплено";
     }
 }

@@ -20,6 +20,8 @@ class EcsStartup : MonoBehaviour
 
     private void Init () 
     {        
+        Application.targetFrameRate = 60;
+        
         world = new EcsWorld ();
         systems = new EcsSystems (world);
         systems
